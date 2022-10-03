@@ -1,7 +1,7 @@
 # Changes
 - [x] Login Page
-- [-] Main Light Mode
-- [ ] Dark Mode
+- [x] Main Light Mode
+- [x] Dark Mode
 - [x] Check off task in Habitica
 - [ ] habitica notification when checked off
 - [ ] Pomoduro Timer
