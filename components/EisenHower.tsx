@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
+import next from "next";
+import { useState, useEffect, Component } from "react";
 import Pomodoro from "./Pomodoro";
+import'react-toastify/dist/ReactToastify.css'; 
+import { ToastContainer, toast} from'react-toastify'; 
+
 
 const creator = "a80214a4-2868-4f11-aa34-bb6327c57b9c";
 const project_name = "EisenHower";
@@ -20,6 +24,8 @@ export default function EisenHower(props: Props) {
 	let [delegate, setDelegate] = useState([""]);
 	let [_delete, setDelete] = useState([""]);
 	let [pomodoro, setPomodoro] = useState("");
+	let taskCompleteSound = new Audio("/public/audio/mixhit-unlock-game-notification-253.wav");
+	let pomCompleteSound = new Audio("/public/audio/mixhit-achievement-bell-600.wav");
 
 	async function getTags(
 		apiKey: string,
@@ -113,7 +119,10 @@ export default function EisenHower(props: Props) {
 			.then((res) => {
 				switch (res.status) {
 					case 200:
-						console.log("success");
+						taskCompleteSound.play();
+						toast.success('successful', {
+							position: toast.POSITION.BOTTOM_CENTER,
+							autoClose:2000})
 						setState((tasks: any[]) => tasks.filter((task) => task.id !== id));
 						break;
 					case 404:
@@ -131,24 +140,9 @@ export default function EisenHower(props: Props) {
 
 	function put_task_text_in_ul(tasks: any, callBack: any): string[] {
 		return tasks?.map((task: any) => (
-			<li key={task.id}>
-				<input
-					onChange={() => checkOff(task.id, callBack)}
-					type="checkbox"
-				></input>
+			<button onClick={() => checkOff(task.id, callBack) } className="task-button" key={task.id}>
 				<label>{task.text}</label>
-				<button onClick={() => setPomodoro(task.id)}>🍅</button>
-				{pomodoro === task.id ? (
-					<Pomodoro
-						stopPomodoro={() => {
-							setPomodoro("");
-							checkOff(task.id, callBack);
-						}}
-					/>
-				) : (
-					<></>
-				)}
-			</li>
+			</button>
 		));
 	}
 	useEffect(() => {
@@ -164,35 +158,42 @@ export default function EisenHower(props: Props) {
 	}, []);
 
 	return (
-		<div className="grid">
-			<div className="do">
+		<div className="wrapper">
+			<div className="grid">
+				<div className="sector do">
 				<div className="action">
 					<div className="task-count">{_do.length}</div>
 					<h2>Do</h2>
 				</div>
 				<ul>{put_task_text_in_ul(_do, setDo)}</ul>
-			</div>
-			<div className="defer">
-				<div className="action">
-					<div className="task-count">{defer.length}</div>
-					<h2>defer</h2>
 				</div>
-				<ul>{put_task_text_in_ul(defer, setDefer)}</ul>
-			</div>
-			<div className="delegate">
-				<div className="action">
-					<div className="task-count">{delegate.length}</div>
-					<h2>delegate</h2>
+				<div className="sector defer">
+					<div className="action">
+						<div className="task-count">{defer.length}</div>
+						<h2>defer</h2>
+					</div>
+					<ul>{put_task_text_in_ul(defer, setDefer)}</ul>
 				</div>
-				<ul>{put_task_text_in_ul(delegate, setDelegate)}</ul>
-			</div>
-			<div className="delete">
-				<div className="action">
-					<div className="task-count">{_delete.length}</div>
-					<h2>delete</h2>
+				<div className="sector delegate">
+					<div className="action">
+						<div className="task-count">{delegate.length}</div>
+						<h2>delegate</h2>
+					</div>
+					<ul>{put_task_text_in_ul(delegate, setDelegate)}</ul>
 				</div>
-				<ul>{put_task_text_in_ul(_delete, setDelete)}</ul>
+				<div className="sector delete">
+					<div className="action">
+						<div className="task-count">{_delete.length}</div>
+						<h2>delete</h2>
+					</div>
+					<ul>{put_task_text_in_ul(_delete, setDelete)}</ul>
+				</div>
 			</div>
+			<div className="stats-wrapper">
+				<ToastContainer />
+				<Pomodoro stopPomodoro={() => {setPomodoro}} />
+			</div>
+			
 		</div>
 	);
 }

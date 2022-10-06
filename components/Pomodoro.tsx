@@ -57,19 +57,16 @@ export default function Pomodoro(props: Props) {
   );
 
   return (
-    <div className={styles.container}>
-      <br />
-      <div
-        className={styles["outer-circle"]}
-        style={{
-          background: `conic-gradient(red ${progress}deg, blue ${progress}deg)`,
-        }}
-      >
-        <div className={styles["inner-circle"]}>
-          <time className="time" dateTime="{time}">
-            {time}
-          </time>
-        </div>
+    <div className={styles.pom}>
+      <button className={styles.pom__button}>
+        <span id="timer" className={styles.pom__time}>{time}</span>
+        <p className={styles.pom__words}>until break</p>
+      </button>
+      <div className={styles.pom__round}>
+        {/* {round}/4 */}
+      </div>
+      <div className="stats">
+        
       </div>
     </div>
   );
